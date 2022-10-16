@@ -1,6 +1,6 @@
-# DataMining
+# Introduction
 
-A repository that contains all the code and documentation associated to the project of the course of data mining 2022-2023.
+This repository contains all the code and documentation associated to the project of the course of data mining 2022-2023.
 
 # Authors
 
