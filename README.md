@@ -15,23 +15,23 @@ The authors of this project are:
   <tbody>
     <tr>
       <td>Raúl Barba Rojas</td>
-      <td><a href="Raul.Barba@alu.uclm.es">Raul.Barba@alu.uclm.es</a></td>
+      <td><a href="https://github.com/RaulBarbaRojas">Raul.Barba@alu.uclm.es</a></td>
     </tr>
     <tr>
       <td>Diego Guerrero Del Pozo</td>
-      <td><a href="Diego.Guerrero@alu.uclm.es">Diego.Guerrero@alu.uclm.es</a></td>
+      <td><a href="https://github.com/DiegoGDP">Diego.Guerrero@alu.uclm.es</a></td>
     </tr>
     <tr>
       <td>Maja Anna Swierk</td>
-      <td><a href="MajaAnna.Swierk@alu.uclm.es">MajaAnna.Swierk@alu.uclm.es</a></td>
+      <td><a href="https://github.com/manna8">MajaAnna.Swierk@alu.uclm.es</a></td>
     </tr>
     <tr>
       <td>Jakub Konieczny</td>
-      <td><a href="Jakub.Konieczny@alu.uclm.es">Jakub.Konieczny@alu.uclm.es</a></td>
+      <td><a href="https://github.com/KubaKonieczny">Jakub.Konieczny@alu.uclm.es</a></td>
     </tr>
     <tr>
       <td>Juan Pablo Pérez Leal</td>
-      <td><a href="JuanPablo.Perez1@alu.uclm.es">JuanPablo.Perez1@alu.uclm.es</a></td>
+      <td><a href="https://github.com/Juanperez30">JuanPablo.Perez1@alu.uclm.es</a></td>
     </tr>
   </tbody>
 </table>
