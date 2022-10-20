@@ -29,9 +29,5 @@ The authors of this project are:
       <td>Jakub Konieczny</td>
       <td><a href="https://github.com/KubaKonieczny">Jakub.Konieczny@alu.uclm.es</a></td>
     </tr>
-    <tr>
-      <td>Juan Pablo Pérez Leal</td>
-      <td><a href="https://github.com/Juanperez30">JuanPablo.Perez1@alu.uclm.es</a></td>
-    </tr>
   </tbody>
 </table>
