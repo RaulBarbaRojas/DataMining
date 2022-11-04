@@ -107,12 +107,11 @@ DATASET1_2019_URL = 'https://www.mapa.gob.es/es/alimentacion/temas/consumo-tende
 DATASET1_2020_URL = 'https://www.mapa.gob.es/es/alimentacion/temas/consumo-tendencias/' + \
     '2020-datos-mensuales-panel-hogares-ccaa-rev-nov2021_tcm30-540244.xlsx'
 
-DATASET1_NAME = 'dataset1.txt'
-
 DATASET5_URL = 'https://www.ecdc.europa.eu/sites/default/' \
     + 'files/documents/COVID-19-geographic-disbtribution-worldwide-2020-12-14.xlsx'
 
-DATASET5_NAME = 'dataset5.txt'
+DATASET1_NAME = '/home/app/data/dataset1.txt'
+DATASET5_NAME = '/home/app/data/dataset5.txt'
 
 ROWS_TO_PARSE_2018_AND_2019 = 467
 ROWS_TO_PARSE_2020 = 497
