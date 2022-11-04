@@ -1,5 +1,3 @@
-SETUP:
-
 ----- DATA EXTRACTION SETUP -----
 
 The result of the data extraction will be text files with the extracted data. Steps:
