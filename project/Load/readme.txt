@@ -9,5 +9,7 @@ The result of the data load will include two dabase schemas:
  
 Steps:
 
- 1. Create a postgres database inside a docker container: 
- 2. Create a docker container that will create (drop if exists) the tables and add the extracted data to them.
+ 1. Create a postgres database inside a docker container: docker run --name <name-of-db-container> -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+ 2. Create a docker container that will create (drop if exists) the tables and add the extracted data to them: NOT WORKING YET
+
+ (Since step 2 does not work, generate the db structure with: python3 load_raw.py -install dependencies in venv-)

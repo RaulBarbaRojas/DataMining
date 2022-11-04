@@ -1,8 +1,7 @@
 ''' DATABASE NAMES '''
 
 BASE_DATABASE = 'postgres'
-RAW_DATABASE = 'agriculture_raw'
-PROCESSED_DATABASE = 'agriculture_processed'
+AGRICULTURE_DATABASE = 'agriculture_db'
 
 ''' USER CONSTANTS '''
 
@@ -14,6 +13,41 @@ PASSWORD = 'postgres'
 HOST = '127.0.0.1'
 PORT = '5432'
 
+
+''' SQL: CREATE DATABASE '''
+DATABASE_SQL = 'CREATE DATABASE agriculture_db'
+DROP_DATABASE_SQL = 'DROP DATABASE IF EXISTS agriculture_db'
+
 ''' SQL: CREATE RAW SCHEMA (IF NOT EXISTS) '''
-DROP_RAW_SCHEMA_SQL = 'DROP DATABASE IF EXISTS agriculture_raw'
-RAW_SCHEMA_SQL = 'CREATE DATABASE agriculture_raw'
+
+RAW_SCHEMA_SQL = 'CREATE SCHEMA agriculture_raw AUTHORIZATION CURRENT_USER'
+DROP_RAW_SCHEMA_SQL = 'DROP SCHEMA IF EXISTS agriculture_raw CASCADE'
+RAW_CONSUMPTION_TABLE_SQL = ''' CREATE TABLE agriculture_raw.consumption (
+                                    year INTEGER,
+                                    month INTEGER,
+                                    CCAA TEXT,
+                                    product TEXT,
+                                    consumption_per_capita REAL,
+                                    expenses_per_capita REAL,
+                                    market_penetration REAL,
+                                    average_price_per_kg_or_l REAL,
+                                    value_in_thousands_of_euros REAL,
+                                    volume_in_thousands_of_kg_or_l REAL,
+                                    PRIMARY KEY(year, month, CCAA, product)
+                                )'''
+
+RAW_COVID_TABLE_SQL = ''' CREATE TABLE agriculture_raw.covid (
+                                dateRep DATE,
+                                countriesAndTerritories TEXT,
+                                day INTEGER,
+                                month INTEGER,
+                                year INTEGER,
+                                cases INTEGER,
+                                deaths INTEGER,
+                                geoId TEXT,
+                                countryTerritoryCode TEXT,
+                                popData2019 REAL,
+                                continentExp TEXT,
+                                incidence REAL,
+                                PRIMARY KEY(dateRep, countriesAndTerritories)
+                            )'''
