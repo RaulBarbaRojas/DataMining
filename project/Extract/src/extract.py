@@ -1,0 +1,115 @@
+''' MODULE FOR EXTRACTING THE DATA THAT IS NEEDED FOR THE PROJECT '''
+
+import requests
+import pandas as pd
+
+from constants import LIST_MONTHS
+from constants import LIST_PRODUCTS
+from constants import DATASET1_COLUMNS
+from constants import CCAA_POSITIONS
+from constants import DATASET1_NAME
+from constants import DATASET1_2018_URL
+from constants import DATASET1_2019_URL
+from constants import DATASET1_2020_URL
+from constants import DATASET5_NAME
+from constants import DATASET5_URL
+from constants import ROWS_TO_PARSE_2018_AND_2019
+from constants import ROWS_TO_PARSE_2020
+from constants import ROWS_TO_PARSE_DEC_2019
+
+
+def create_df1_by_year(url_year, year):
+    ''' Method for obtaining the df1 of a given year'''
+    if year == 2020:
+        df1 = create_df1_by_year_by_month(url_year, 'enero', year)
+    else:
+        df1 = create_df1_by_year_by_month(url_year, 'Enero', year)
+
+    for month in LIST_MONTHS:
+        df1 = pd.concat([df1, create_df1_by_year_by_month(url_year, month, year)])
+
+    return df1
+
+
+def create_df1_by_year_by_month(url_year, month, year):
+    ''' Method for obtaining the df1 of a given year in a given month '''
+    rows_to_parse = ROWS_TO_PARSE_2018_AND_2019
+    if year == 2020:
+        month = month.lower()
+        rows_to_parse = ROWS_TO_PARSE_2020
+    elif year == 2019 and month == 'Diciembre':
+        rows_to_parse = ROWS_TO_PARSE_DEC_2019
+    dataset1 = pd.read_excel(
+        url_year,
+        sheet_name = month,
+        usecols = 'A:G',
+        skiprows = 2,
+        nrows = rows_to_parse
+    )
+    df1 = dataset1[dataset1['Unnamed: 0'].isin(LIST_PRODUCTS)]
+    df1 = df1.rename(columns = {'Unnamed: 0' : 'Producto'})
+    df1['CCAA'] = ['Total Nacional' for i in range(df1.shape[0])]
+
+
+    for key, val in CCAA_POSITIONS.items():
+        monthly_df = pd.read_excel(
+            url_year,
+            sheet_name = month,
+            usecols = val,
+            skiprows = 3,
+            header = None,
+            names = DATASET1_COLUMNS,
+            nrows = rows_to_parse
+        )
+        monthly_df = monthly_df[monthly_df['Producto'].isin(LIST_PRODUCTS)]
+        monthly_df['CCAA'] = [str(key) for i in range(monthly_df.shape[0])]
+        df1 = pd.concat([df1, monthly_df])
+
+    df1['Año'] = [year for i in range(df1.shape[0])]
+    df1['Mes'] = [month.capitalize() for i in range(df1.shape[0])]
+    df1 = df1.set_index(['Año', 'Mes', 'CCAA', 'Producto'])
+
+    return df1
+
+def download_dataset1_2018():
+    ''' Method for downloading dataset 1: 2018 data only '''
+    return create_df1_by_year(DATASET1_2018_URL, 2018)
+
+def download_dataset1_2019():
+    ''' Method for downloading dataset 1: 2019 data only '''
+    return create_df1_by_year(DATASET1_2019_URL, 2019)
+
+def download_dataset1_2020():
+    ''' Method for downloading dataset 1: 2019 data only '''
+    return create_df1_by_year(DATASET1_2020_URL, 2020)
+
+def download_dataset1():
+    ''' Method for downloading dataset 1 '''
+    print('DATASET 1: START')
+    dataset1_2018 = download_dataset1_2018()
+    print('DATASET 2: START')
+    dataset1_2019 = download_dataset1_2019()
+    print('DATASET 3: START')
+    dataset1_2020 = download_dataset1_2020()
+    print('CONCATENATING')
+    pd.concat(
+        [dataset1_2018, dataset1_2019, dataset1_2020]
+    ).to_csv(DATASET1_NAME, float_format='%.2f')
+
+
+def download_dataset5():
+    ''' Method for downloading dataset 5 '''
+    dataset5_response = requests.get(DATASET5_URL)
+    dataset5 = pd.read_excel(dataset5_response.content)
+    dataset5.to_csv(DATASET5_NAME, index = None, header = True)
+
+def main():
+    ''' Main method '''
+    download_dataset1()
+    download_dataset5()
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as exception:
+        print(exception)
