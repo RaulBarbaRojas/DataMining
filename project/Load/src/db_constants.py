@@ -24,7 +24,7 @@ RAW_SCHEMA_SQL = 'CREATE SCHEMA agriculture_raw AUTHORIZATION CURRENT_USER'
 DROP_RAW_SCHEMA_SQL = 'DROP SCHEMA IF EXISTS agriculture_raw CASCADE'
 RAW_CONSUMPTION_TABLE_SQL = ''' CREATE TABLE agriculture_raw.consumption (
                                     year INTEGER,
-                                    month INTEGER,
+                                    month TEXT,
                                     CCAA TEXT,
                                     product TEXT,
                                     consumption_per_capita REAL,
@@ -62,7 +62,9 @@ INSERT_CONSUMPTION_SQL = ''' INSERT INTO agriculture_raw.consumption(
                                     market_penetration,
                                     average_price_per_kg_or_l,
                                     value_in_thousands_of_euros,
-                                    volume_in_thousands_of_kg_or_l) VALUES ('''
+                                    volume_in_thousands_of_kg_or_l) VALUES
+                                    ({0}, '{1}', '{2}', '{3}', {4}, {5},
+                                    {6}, {7}, {8}, {9});'''
 
 INSERT_COVID_SQL = ''' INSERT INTO agriculture_raw.covid(
                                 dateRep,
@@ -76,4 +78,6 @@ INSERT_COVID_SQL = ''' INSERT INTO agriculture_raw.covid(
                                 countryTerritoryCode,
                                 popData2019,
                                 continentExp,
-                                incidence) VALUES ('''
+                                incidence) VALUES
+                                ('{0}', {1}, {2}, {3}, {4}, {5},
+                                '{6}', '{7}', '{8}', {9}, '{10}', {11});'''

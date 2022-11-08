@@ -104,9 +104,9 @@ def populate_consumption_data():
                 values = lines[i].split(',')
                 
                 year = int(values[0])
-                month = process_month(values[1])
-                region = str(values[2]).replace(' ','_')
-                product = str(values[3]).replace(' ','_')
+                month = str(values[1])
+                region = str(values[2])
+                product = str(values[3])
 
                 if values[4] != '':
                     consumption_per_capita = float(values[4])
@@ -138,16 +138,10 @@ def populate_consumption_data():
                 else:
                     volume_in_thousands_of_kg_or_l = 'NULL'
 
-                db_cursor.execute(INSERT_CONSUMPTION_SQL + str(year) + ','
-                                                        + str(month) + ',\''
-                                                        + str(region) + '\',\''
-                                                        + str(product) + '\','
-                                                        + str(consumption_per_capita) + ','
-                                                        + str(expenses_per_capita) + ','
-                                                        + str(market_penetration) + ','
-                                                        + str(average_price_per_kg_or_l) + ','
-                                                        + str(value_in_thousands_of_euros) + ','
-                                                        + str(volume_in_thousands_of_kg_or_l) + ');')
+                db_cursor.execute(INSERT_CONSUMPTION_SQL.format(year, month, region, product,
+                    consumption_per_capita, expenses_per_capita, market_penetration,
+                    average_price_per_kg_or_l, value_in_thousands_of_euros,
+                    volume_in_thousands_of_kg_or_l))
 
         logging.debug('Data inserted successfully in the consumption database')
         db_conn.close()
@@ -181,8 +175,8 @@ def populate_covid_data():
 
                     if len(values) == 12:
                         values = [values[0], values[1], values[2], values[3], values[4],
-                                values[5], values[6] + values[7], values[8], values[9],
-                                values[10], values[11], '']
+                                values[5], values[6] + ', ' + values[7], values[8], values[9],
+                                values[10], values[11], 'NULL']
                     else:
                         values = [values[0], values[1], values[2], values[3], values[4],
                             values[5], values[6] + values[7], values[8], values[9],
@@ -196,11 +190,11 @@ def populate_covid_data():
                 year = int(values[3])
                 cases = int(values[4])
                 deaths = int(values[5])
-                countriesAndTerritories = str(values[6]).replace(' ','_')
-                geoId = str(values[7]).replace(' ','_')
+                countriesAndTerritories = str(values[6])
+                geoId = str(values[7])
 
                 if values[8] != '':
-                    countryTerritoryCode = str(values[8]).replace(' ','_')
+                    countryTerritoryCode = str(values[8])
                 else:
                     countryTerritoryCode = 'NULL'
 
@@ -219,52 +213,14 @@ def populate_covid_data():
                 else:
                     incidence = 'NULL'
 
-                db_cursor.execute(INSERT_COVID_SQL + '\'' + str(dateRep) + '\','
-                                                        + str(day) + ','
-                                                        + str(month) + ','
-                                                        + str(year) + ','
-                                                        + str(cases) + ','
-                                                        + str(deaths) + ',\''
-                                                        + str(countriesAndTerritories) + '\',\''
-                                                        + str(geoId) + '\',\''
-                                                        + str(countryTerritoryCode) + '\','
-                                                        + str(popData2019) + ',\''
-                                                        + str(continentExp) + '\','
-                                                        + str(incidence) + ');')
+                db_cursor.execute(INSERT_COVID_SQL.format(dateRep, day, month, year,
+                    cases, deaths, countriesAndTerritories, geoId, countryTerritoryCode,
+                    popData2019, continentExp, incidence))
 
         logging.debug('Data inserted successfully in the covid database')
         db_conn.close()
     except Exception as exception:
         logging.error(f'Cannot populate the covid database due to this error: {exception}')
-
-
-def process_month(month):
-    ''' Returns the number corresponding to a month given its name '''
-
-    if month == 'Enero':
-        return 1
-    elif month == 'Febrero':
-        return 2
-    elif month == 'Marzo':
-        return 3
-    elif month == 'Abril':
-        return 4
-    elif month == 'Mayo':
-        return 5
-    elif month == 'Junio':
-        return 6
-    elif month == 'Julio':
-        return 7
-    elif month == 'Agosto':
-        return 8
-    elif month == 'Septiembre':
-        return 9
-    elif month == 'Octubre':
-        return 10
-    elif month == 'Noviembre':
-        return 11
-    elif month == 'Diciembre':
-        return 12
 
 
 def main():
