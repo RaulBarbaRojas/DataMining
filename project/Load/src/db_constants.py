@@ -38,12 +38,12 @@ RAW_CONSUMPTION_TABLE_SQL = ''' CREATE TABLE agriculture_raw.consumption (
 
 RAW_COVID_TABLE_SQL = ''' CREATE TABLE agriculture_raw.covid (
                                 dateRep DATE,
-                                countriesAndTerritories TEXT,
                                 day INTEGER,
                                 month INTEGER,
                                 year INTEGER,
                                 cases INTEGER,
                                 deaths INTEGER,
+                                countriesAndTerritories TEXT,
                                 geoId TEXT,
                                 countryTerritoryCode TEXT,
                                 popData2019 REAL,
@@ -51,3 +51,29 @@ RAW_COVID_TABLE_SQL = ''' CREATE TABLE agriculture_raw.covid (
                                 incidence REAL,
                                 PRIMARY KEY(dateRep, countriesAndTerritories)
                             )'''
+
+INSERT_CONSUMPTION_SQL = ''' INSERT INTO agriculture_raw.consumption(
+                                    year,
+                                    month,
+                                    CCAA,
+                                    product,
+                                    consumption_per_capita,
+                                    expenses_per_capita,
+                                    market_penetration,
+                                    average_price_per_kg_or_l,
+                                    value_in_thousands_of_euros,
+                                    volume_in_thousands_of_kg_or_l) VALUES ('''
+
+INSERT_COVID_SQL = ''' INSERT INTO agriculture_raw.covid(
+                                dateRep,
+                                day,
+                                month,
+                                year,
+                                cases,
+                                deaths,
+                                countriesAndTerritories,
+                                geoId,
+                                countryTerritoryCode,
+                                popData2019,
+                                continentExp,
+                                incidence) VALUES ('''
