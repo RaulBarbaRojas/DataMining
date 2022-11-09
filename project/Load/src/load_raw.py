@@ -17,6 +17,8 @@ from db_constants import RAW_CONSUMPTION_TABLE_SQL
 from db_constants import RAW_COVID_TABLE_SQL
 from db_constants import INSERT_CONSUMPTION_SQL
 from db_constants import INSERT_COVID_SQL
+from db_constants import DATASET1_PATH
+from db_constants import DATASET5_PATH
 
 logging.basicConfig(
     format = '%(asctime)s - %(filename)s - %(levelname)s - %(message)s',
@@ -96,7 +98,7 @@ def populate_consumption_data():
         db_cursor = db_conn.cursor()
         logging.debug('Adding first dataset to the database')
 
-        file = open("data/dataset1.txt", "r")
+        file = open(DATASET1_PATH, "r")
         lines = file.read().split("\n")
 
         for i in range(len(lines)):
@@ -165,7 +167,7 @@ def populate_covid_data():
         db_cursor = db_conn.cursor()
         logging.debug('Adding second dataset to the database')
 
-        file = open("data/dataset5.txt", "r")
+        file = open(DATASET5_PATH, "r")
         lines = file.read().split("\n")
 
         for i in range(len(lines)):
