@@ -1,3 +1,8 @@
+''' DOCKER PATH '''
+
+DATASET1_PATH = '/home/app/data/dataset1.txt'
+DATASET5_PATH = '/home/app/data/dataset5.txt'
+
 ''' DATABASE NAMES '''
 
 BASE_DATABASE = 'postgres'
@@ -10,7 +15,7 @@ PASSWORD = 'postgres'
 
 ''' DATABASE ACCESS CONSTANTS '''
 
-HOST = '127.0.0.1'
+HOST = 'host.docker.internal'
 PORT = '5432'
 
 
