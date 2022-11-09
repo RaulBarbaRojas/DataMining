@@ -200,7 +200,7 @@ def populate_covid_data():
                 else:
                     countryTerritoryCode = 'NULL'
 
-                if values[9].isnumeric():
+                if values[9] != 'Other':
                     popData2019 = float(values[9])
                 else:
                     popData2019 = 'NULL'
