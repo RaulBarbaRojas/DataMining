@@ -220,7 +220,7 @@ def obtain_datacard_h3(consumption_dataset_no_outliers):
     return datacard_h3
 
 
-def load_from_db():
+def transform_from_db():
     '''Method to retrive the data from the db'''
 
     try:
@@ -259,4 +259,4 @@ def load_from_db():
 
 
 if __name__ == '__main__':
-    load_from_db()
+    transform_from_db()
