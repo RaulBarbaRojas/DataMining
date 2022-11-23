@@ -1,5 +1,6 @@
 ''' MODULE FOR EXTRACTING THE DATA THAT IS NEEDED FOR THE PROJECT '''
 
+import logging
 import requests
 import pandas as pd
 
@@ -17,6 +18,11 @@ from constants import ROWS_TO_PARSE_2018_AND_2019
 from constants import ROWS_TO_PARSE_2020
 from constants import ROWS_TO_PARSE_DEC_2019
 
+
+logging.basicConfig(
+    format = '%(asctime)s - %(filename)s - %(levelname)s - %(message)s',
+    level = logging.DEBUG
+)
 
 def create_df1_by_year(url_year, year):
     ''' Method for obtaining the df1 of a given year'''
@@ -85,13 +91,13 @@ def download_dataset1_2020():
 
 def download_dataset1():
     ''' Method for downloading dataset 1 '''
-    print('DATASET 1: START')
+    logging.debug('DATASET 1: START')
     dataset1_2018 = download_dataset1_2018()
-    print('DATASET 2: START')
+    logging.debug('DATASET 2: START')
     dataset1_2019 = download_dataset1_2019()
-    print('DATASET 3: START')
+    logging.debug('DATASET 3: START')
     dataset1_2020 = download_dataset1_2020()
-    print('CONCATENATING')
+    logging.debug('CONCATENATING...')
     pd.concat(
         [dataset1_2018, dataset1_2019, dataset1_2020]
     ).to_csv(DATASET1_NAME, float_format='%.2f')
@@ -112,4 +118,4 @@ if __name__ == '__main__':
     try:
         main()
     except Exception as exception:
-        print(exception)
+        logging.debug('Cannot extract the information due to this error: %s', exception)

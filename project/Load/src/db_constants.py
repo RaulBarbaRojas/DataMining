@@ -3,15 +3,18 @@
 DATASET1_PATH = '/home/app/data/dataset1.txt'
 DATASET5_PATH = '/home/app/data/dataset5.txt'
 
+
 ''' DATABASE NAMES '''
 
 BASE_DATABASE = 'postgres'
 AGRICULTURE_DATABASE = 'agriculture_db'
 
+
 ''' USER CONSTANTS '''
 
 USERNAME = 'postgres'
 PASSWORD = 'postgres'
+
 
 ''' DATABASE ACCESS CONSTANTS '''
 
@@ -20,8 +23,10 @@ PORT = '5432'
 
 
 ''' SQL: CREATE DATABASE '''
+
 DATABASE_SQL = 'CREATE DATABASE agriculture_db'
 DROP_DATABASE_SQL = 'DROP DATABASE IF EXISTS agriculture_db'
+
 
 ''' SQL: CREATE RAW SCHEMA (IF NOT EXISTS) '''
 
