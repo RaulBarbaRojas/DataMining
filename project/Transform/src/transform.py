@@ -1,9 +1,11 @@
 ''' MODULE FOR TRANSFORMING THE DATA INSIDE A PSQL DATABASE '''
 
+import os
 import logging
 import psycopg2
 import pandas as pd
 import sklearn.preprocessing
+from bigml.api import BigML
 
 from db_constants import AGRICULTURE_DATABASE
 from db_constants import USERNAME
@@ -77,7 +79,49 @@ def transform_dataset1(initial_consumption_dataset):
             2 * initial_consumption_dataset['average_price_per_kg_or_l'].std()]
     )
 
-    #TODO: anomaly detection with BigML
+    remove_consumption_anomalies(consumption_dataset_no_outliers)
+
+    return consumption_dataset_no_outliers
+
+
+def remove_consumption_anomalies(consumption_dataset_no_outliers):
+    ''' Removes the anomalies in the consumption dataset using bigML '''
+
+    api = BigML('sma_team_bgks', '4a3eda982d8771f3b55de8d617ad4c8334cfb401')
+
+    consumption_dataset_no_outliers.to_csv('data/temp_consumption.txt')
+
+    logging.debug('Connecting to bigML...')
+    source = api.create_source('data/temp_consumption.txt')
+    api.ok(source)
+
+    logging.debug('Adding consumption dataset to bigML...')
+    dataset = api.create_dataset(source)
+    api.ok(dataset)
+
+    logging.debug('Creating anomaly detector for consumption dataset...')
+    anomaly = api.create_anomaly(dataset)
+    api.ok(anomaly)
+
+    logging.debug('Detecting anomalies in consumption dataset...')
+    test_dataset = dataset
+    batch_anomaly_score = api.create_batch_anomaly_score(anomaly, test_dataset)
+    api.ok(batch_anomaly_score)
+    api.download_batch_anomaly_score(batch_anomaly_score, filename='data/temp_consumption.txt')
+
+    anomaly_scores = pd.read_csv('data/temp_consumption.txt')
+
+    consumption_dataset_no_outliers.reset_index(inplace = True)
+    consumption_dataset_no_outliers = consumption_dataset_no_outliers.join(anomaly_scores)
+
+    consumption_dataset_no_outliers = consumption_dataset_no_outliers\
+        [~(consumption_dataset_no_outliers['score'] >= 0.6)]
+    consumption_dataset_no_outliers.reset_index(inplace = True)
+    consumption_dataset_no_outliers.drop(columns = ['index','score','level_0'],\
+        inplace = True, axis = 1)
+
+    os.remove('data/temp_consumption.txt')
+    logging.debug('Anomalies in consumption dataset removed correctly!')
 
     return consumption_dataset_no_outliers
 
@@ -132,8 +176,49 @@ def transform_dataset5(initial_covid_dataset):
             2 * covid_dataset_no_outliers['deaths_index'].std()]
     )
 
-    #TODO: anomaly detection with BigML
-    #TODO: change from 0.0.0.0 to host.docker.internal
+    remove_covid_anomalies(covid_dataset_no_outliers)
+
+    return covid_dataset_no_outliers
+
+
+def remove_covid_anomalies(covid_dataset_no_outliers):
+    ''' Removes the anomalies in the covid dataset using bigML '''
+
+    api = BigML('sma_team_bgks', '4a3eda982d8771f3b55de8d617ad4c8334cfb401')
+
+    covid_dataset_no_outliers.to_csv('data/temp_covid.txt')
+
+    logging.debug('Connecting to bigML...')
+    source = api.create_source('data/temp_covid.txt')
+    api.ok(source)
+
+    logging.debug('Adding covid dataset to bigML...')
+    dataset = api.create_dataset(source)
+    api.ok(dataset)
+
+    logging.debug('Creating anomaly detector for covid dataset...')
+    anomaly = api.create_anomaly(dataset)
+    api.ok(anomaly)
+
+    logging.debug('Detecting anomalies in covid dataset...')
+    test_dataset = dataset
+    batch_anomaly_score = api.create_batch_anomaly_score(anomaly, test_dataset)
+    api.ok(batch_anomaly_score)
+    api.download_batch_anomaly_score(batch_anomaly_score, filename='data/temp_covid.txt')
+
+    anomaly_scores = pd.read_csv('data/temp_covid.txt')
+
+    covid_dataset_no_outliers.reset_index(inplace = True)
+    covid_dataset_no_outliers = covid_dataset_no_outliers.join(anomaly_scores)
+
+    covid_dataset_no_outliers = covid_dataset_no_outliers\
+        [~(covid_dataset_no_outliers['score'] >= 0.6)]
+    covid_dataset_no_outliers.reset_index(inplace = True)
+    covid_dataset_no_outliers.drop(columns = ['index','score','level_0'],\
+        inplace = True, axis = 1)
+
+    os.remove('data/temp_covid.txt')
+    logging.debug('Anomalies in covid dataset removed correctly!')
 
     return covid_dataset_no_outliers
 
@@ -169,8 +254,6 @@ def obtain_datacard_h1(consumption_dataset_no_outliers):
     datacard_h1 = datacard_h1[datacard_h1['product'] == 'SANDIA']
     datacard_h1.drop(columns=['product', 'market_penetration', 'ccaa'], inplace=True)
 
-    datacard_h1.to_csv('data/datacard_h1_not_normalized.txt')
-
     datacard_h1.loc[datacard_h1.index, 'average_price_per_kg_or_l'] = \
         sklearn.preprocessing.minmax_scale(datacard_h1['average_price_per_kg_or_l'])
     datacard_h1.loc[datacard_h1.index, 'expenses_per_capita'] = \
@@ -187,8 +270,6 @@ def obtain_datacard_h2(consumption_dataset_no_outliers, covid_to_join):
     datacard_h2 = pd.merge(consumption_dataset_no_outliers,covid_to_join, on=['month','year'])
     datacard_h2 = datacard_h2[datacard_h2['product'] == 'SANDIA']
     datacard_h2.drop(columns=['product', 'year', 'market_penetration', 'ccaa'], inplace=True)
-
-    datacard_h2.to_csv('data/datacard_h2_not_normalized.txt')
 
     datacard_h2.loc[datacard_h2.index, 'average_price_per_kg_or_l'] = \
         sklearn.preprocessing.minmax_scale(datacard_h2['average_price_per_kg_or_l'])
@@ -214,8 +295,6 @@ def obtain_datacard_h3(consumption_dataset_no_outliers):
         sklearn.preprocessing.minmax_scale(datacard_h3['market_penetration'])
     datacard_h3.loc[datacard_h3.index, 'year'] = \
         sklearn.preprocessing.minmax_scale(datacard_h3['year'])
-
-    datacard_h3.to_csv('data/datacard_h3_not_normalized.txt')
 
     return datacard_h3
 
