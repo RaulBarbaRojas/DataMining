@@ -2,6 +2,7 @@
 
 import logging
 import psycopg2
+from tqdm import tqdm
 
 from db_constants import BASE_DATABASE
 from db_constants import AGRICULTURE_DATABASE
@@ -101,7 +102,7 @@ def populate_consumption_data():
         with open(DATASET1_PATH, "r", encoding = "utf8") as file:
             lines = file.read().split("\n")
 
-            for i, line in enumerate(lines):
+            for i, line in tqdm(enumerate(lines), "Adding consumption dataset", total=len(lines)):
                 if i not in (0, len(lines) - 1):
                     values = line.split(',')
 
@@ -170,7 +171,7 @@ def populate_covid_data():
         with open(DATASET5_PATH, "r", encoding = "utf8") as file:
             lines = file.read().split("\n")
 
-            for i, line in enumerate(lines):
+            for i, line in tqdm(enumerate(lines), "Adding covid dataset", total=len(lines)):
                 if i not in (0, len(lines) - 1):
                     if "\"" in line:
                         values = line.split(',')

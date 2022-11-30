@@ -310,9 +310,9 @@ def obtain_datacard_h3(consumption_dataset_no_outliers):
     encoder_products = LabelEncoder()
     encoder_products.fit(datacard_h3['product'])
     datacard_h3['product'] = encoder_products.transform(datacard_h3['product'])
-    
-    joblib.dump(encoder_products, 'data/encoder_products.joblib') 
-    joblib.dump(encoder_regions, 'data/encoder_regions.joblib') 
+
+    joblib.dump(encoder_products, 'data/encoder_products.joblib')
+    joblib.dump(encoder_regions, 'data/encoder_regions.joblib')
 
     return datacard_h3
 
