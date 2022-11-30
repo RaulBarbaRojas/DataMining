@@ -5,6 +5,8 @@ import logging
 import psycopg2
 import pandas as pd
 import sklearn.preprocessing
+import joblib
+from sklearn.preprocessing import LabelEncoder
 from bigml.api import BigML
 
 from db_constants import AGRICULTURE_DATABASE
@@ -261,6 +263,9 @@ def obtain_datacard_h1(consumption_dataset_no_outliers):
     datacard_h1.loc[datacard_h1.index, 'year'] = \
         sklearn.preprocessing.minmax_scale(datacard_h1['year'])
 
+    datacard_h1.drop(columns=['year'], inplace=True)
+    print(datacard_h1)
+
     return datacard_h1
 
 
@@ -296,6 +301,19 @@ def obtain_datacard_h3(consumption_dataset_no_outliers):
     datacard_h3.loc[datacard_h3.index, 'year'] = \
         sklearn.preprocessing.minmax_scale(datacard_h3['year'])
 
+    datacard_h3.drop(columns=['year'], inplace=True)
+
+    encoder_regions = LabelEncoder()
+    encoder_regions.fit(datacard_h3['ccaa'])
+    datacard_h3['ccaa'] = encoder_regions.transform(datacard_h3['ccaa'])
+
+    encoder_products = LabelEncoder()
+    encoder_products.fit(datacard_h3['product'])
+    datacard_h3['product'] = encoder_products.transform(datacard_h3['product'])
+    
+    joblib.dump(encoder_products, 'data/encoder_products.joblib') 
+    joblib.dump(encoder_regions, 'data/encoder_regions.joblib') 
+
     return datacard_h3
 
 
@@ -326,6 +344,10 @@ def transform_from_db():
         datacard_h2 = obtain_datacard_h2(consumption_transformed, covid_to_join)
         datacard_h3 = obtain_datacard_h3(consumption_transformed)
 
+        datacard_h1.drop(columns = ['index'], inplace = True)
+        datacard_h2.drop(columns = ['index'], inplace = True)
+        datacard_h3.drop(columns = ['index'], inplace = True)
+
         datacard_h1.to_csv('data/datacard_h1.txt')
         datacard_h2.to_csv('data/datacard_h2.txt')
         datacard_h3.to_csv('data/datacard_h3.txt')
@@ -334,7 +356,7 @@ def transform_from_db():
         db_conn.close()
     except Exception as exception:
         logging.error('Cannot retrieve the information from the database due \
-        to this error: %s', exception)
+            to this error: %s', exception)
 
 
 if __name__ == '__main__':

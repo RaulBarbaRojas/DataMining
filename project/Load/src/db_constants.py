@@ -18,7 +18,7 @@ PASSWORD = 'postgres'
 
 ''' DATABASE ACCESS CONSTANTS '''
 
-HOST = 'host.docker.internal'
+HOST = '0.0.0.0'
 PORT = '5432'
 
 
@@ -32,6 +32,10 @@ DROP_DATABASE_SQL = 'DROP DATABASE IF EXISTS agriculture_db'
 
 RAW_SCHEMA_SQL = 'CREATE SCHEMA agriculture_raw AUTHORIZATION CURRENT_USER'
 DROP_RAW_SCHEMA_SQL = 'DROP SCHEMA IF EXISTS agriculture_raw CASCADE'
+
+PROCESSED_SCHEMA_SQL = 'CREATE SCHEMA agriculture_processed AUTHORIZATION CURRENT_USER'
+DROP_PROCESSED_SCHEMA_SQL = 'DROP SCHEMA IF EXISTS agriculture_processed CASCADE'
+
 RAW_CONSUMPTION_TABLE_SQL = ''' CREATE TABLE agriculture_raw.consumption (
                                     year INTEGER,
                                     month TEXT,
@@ -62,6 +66,28 @@ RAW_COVID_TABLE_SQL = ''' CREATE TABLE agriculture_raw.covid (
                                 PRIMARY KEY(dateRep, countriesAndTerritories)
                             )'''
 
+DATACARD1_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard1 (
+                                    month TEXT,
+                                    expenses_per_capita REAL,
+                                    average_price_per_kg_or_l REAL
+                                )'''
+
+DATACARD2_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard2 (
+                                    month TEXT,
+                                    expenses_per_capita REAL,
+                                    average_price_per_kg_or_l REAL,
+                                    cummulative_cases_for_100k REAL
+                                )'''
+
+DATACARD3_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard3 (
+                                    month TEXT,
+                                    ccaa TEXT,
+                                    product TEXT,
+                                    expenses_per_capita REAL,
+                                    market_penetration REAL,
+                                    average_price_per_kg_or_l REAL
+                                )'''
+
 INSERT_CONSUMPTION_SQL = ''' INSERT INTO agriculture_raw.consumption(
                                     year,
                                     month,
@@ -91,3 +117,25 @@ INSERT_COVID_SQL = ''' INSERT INTO agriculture_raw.covid(
                                 incidence) VALUES
                                 ('{0}', {1}, {2}, {3}, {4}, {5},
                                 '{6}', '{7}', '{8}', {9}, '{10}', {11});'''
+
+INSERT_DATACARD1_SQL = ''' INSERT INTO agriculture_processed.datacard1(
+                                    month,
+                                    expenses_per_capita,
+                                    average_price_per_kg_or_l) VALUES
+                                    ({0}, {1}, {2});'''
+
+INSERT_DATACARD2_SQL = ''' INSERT INTO agriculture_processed.datacard2(
+                                    month,
+                                    expenses_per_capita,
+                                    average_price_per_kg_or_l,
+                                    cummulative_cases_for_100k) VALUES
+                                    ({0}, {1}, {2}, {3});'''
+
+INSERT_DATACARD3_SQL = ''' INSERT INTO agriculture_processed.datacard3(
+                                    month,
+                                    ccaa,
+                                    product,
+                                    expenses_per_capita,
+                                    market_penetration,
+                                    average_price_per_kg_or_l) VALUES
+                                    ({0}, {1}, {2}, {3}, {4}, {5});'''

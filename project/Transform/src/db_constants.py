@@ -11,7 +11,7 @@ PASSWORD = 'postgres'
 
 ''' DATABASE ACCESS CONSTANTS '''
 
-HOST = 'host.docker.internal'
+HOST = '0.0.0.0'
 PORT = '5432'
 
 
