@@ -1,6 +1,0 @@
-scikit-learn
-psycopg2-binary
-pandas
-numpy
-tqdm
-bigml
