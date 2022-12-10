@@ -61,22 +61,22 @@ RAW_COVID_TABLE_SQL = ''' CREATE TABLE agriculture_raw.covid (
                             )'''
 
 DATACARD1_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard1 (
-                                    month TEXT,
+                                    month INTEGER,
                                     expenses_per_capita REAL,
                                     average_price_per_kg_or_l REAL
                                 )'''
 
 DATACARD2_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard2 (
-                                    month TEXT,
+                                    month INTEGER,
                                     expenses_per_capita REAL,
                                     average_price_per_kg_or_l REAL,
                                     cummulative_cases_for_100k REAL
                                 )'''
 
 DATACARD3_TABLE_SQL = ''' CREATE TABLE agriculture_processed.datacard3 (
-                                    month TEXT,
-                                    ccaa TEXT,
-                                    product TEXT,
+                                    month INTEGER,
+                                    ccaa INTEGER,
+                                    product INTEGER,
                                     expenses_per_capita REAL,
                                     market_penetration REAL,
                                     average_price_per_kg_or_l REAL
