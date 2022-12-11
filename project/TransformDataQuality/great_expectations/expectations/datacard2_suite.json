@@ -1,0 +1,101 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "datacard2_suite",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "max_value": 204,
+        "min_value": 204
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "month",
+          "average_price_per_kg_or_l",
+          "cummulative_cases_for_100k",
+          "expenses_per_capita"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "month"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "expenses_per_capita"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "average_price_per_kg_or_l"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "cummulative_cases_for_100k"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "expenses_per_capita",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "average_price_per_kg_or_l",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "cummulative_cases_for_100k",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "citation_date": "2022-12-10T15:05:07.163074Z",
+        "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
+      },
+      {
+        "batch_request": {
+          "data_asset_name": "agriculture_processed.datacard2",
+          "data_connector_name": "default_inferred_data_connector_name",
+          "datasource_name": "datasource_processed",
+          "limit": 1000
+        },
+        "citation_date": "2022-12-10T15:05:56.430037Z",
+        "comment": "Created suite added via CLI"
+      }
+    ],
+    "great_expectations_version": "0.15.39"
+  }
+}
