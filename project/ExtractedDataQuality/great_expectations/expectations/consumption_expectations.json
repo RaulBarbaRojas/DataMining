@@ -1,0 +1,76 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "consumption_expectations",
+  "expectations": [
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "max_value": 33048,
+        "min_value": 33048
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_table_columns_to_match_set",
+      "kwargs": {
+        "column_set": [
+          "market_penetration",
+          "month",
+          "product",
+          "value_in_thousands_of_euros",
+          "volume_in_thousands_of_kg_or_l",
+          "average_price_per_kg_or_l",
+          "consumption_per_capita",
+          "expenses_per_capita",
+          "year",
+          "ccaa"
+        ]
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "product"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "average_price_per_kg_or_l",
+        "min_value": 0
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "market_penetration",
+        "max_value": 100,
+        "min_value": 0
+      },
+      "meta": {}
+    }
+  ],
+  "ge_cloud_id": null,
+  "meta": {
+    "citations": [
+      {
+        "citation_date": "2022-11-23T13:21:16.253159Z",
+        "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
+      },
+      {
+        "batch_request": {
+          "data_asset_name": "agriculture_raw.consumption",
+          "data_connector_name": "default_inferred_data_connector_name",
+          "datasource_name": "raw_datasource",
+          "limit": 1000
+        },
+        "citation_date": "2022-11-23T13:21:50.793203Z",
+        "comment": "Created suite added via CLI"
+      }
+    ],
+    "great_expectations_version": "0.15.34"
+  }
+}
