@@ -2,7 +2,6 @@
 
 import logging
 import json
-import os
 import requests
 import psycopg2 # pylint: disable=import-error
 import pandas as pd # pylint: disable=import-error
@@ -12,11 +11,9 @@ from constants import LIST_MONTHS
 from constants import LIST_PRODUCTS
 from constants import DATASET1_COLUMNS
 from constants import CCAA_POSITIONS
-from constants import DATASET1_NAME
 from constants import DATASET1_2018_URL
 from constants import DATASET1_2019_URL
 from constants import DATASET1_2020_URL
-from constants import DATASET5_NAME
 from constants import DATASET5_URL
 from constants import ROWS_TO_PARSE_2018_AND_2019
 from constants import ROWS_TO_PARSE_2020
@@ -33,8 +30,6 @@ from db_constants import RAW_CONSUMPTION_TABLE_SQL
 from db_constants import RAW_COVID_TABLE_SQL
 from db_constants import INSERT_CONSUMPTION_SQL
 from db_constants import INSERT_COVID_SQL
-from db_constants import DATASET1_PATH
-from db_constants import DATASET5_PATH
 
 
 logging.basicConfig(
@@ -117,16 +112,21 @@ def download_dataset1():
     logging.debug('DATASET 3: START')
     dataset1_2020 = download_dataset1_2020()
     logging.debug('CONCATENATING...')
-    pd.concat(
+
+    dataset1 = pd.concat(
         [dataset1_2018, dataset1_2019, dataset1_2020]
-    ).to_csv(DATASET1_NAME, float_format='%.2f')
+    )
+
+    return dataset1
 
 
 def download_dataset5():
     ''' Method for downloading dataset 5 '''
     dataset5_response = requests.get(DATASET5_URL)
     dataset5 = pd.read_excel(dataset5_response.content)
-    dataset5.to_csv(DATASET5_NAME, index = None, header = True)
+
+    return dataset5
+
 
 def create_database():
     ''' Method that creates the raw schema '''
@@ -149,6 +149,7 @@ def create_database():
     db_cursor.execute(DATABASE_SQL)
     logging.debug('Database created successfully!')
     db_conn.close()
+
 
 def create_raw_schema():
     ''' Method to create the raw schema of the database '''
@@ -181,15 +182,13 @@ def create_raw_schema():
     db_conn.close()
 
 
-def populate_raw_schema():
+def populate_raw_schema(dataset1, dataset5):
     ''' Method to populate the raw schema '''
-    populate_consumption_data()
-    populate_covid_data()
-    os.remove(DATASET1_PATH)
-    os.remove(DATASET5_PATH)
+    populate_consumption_data(dataset1)
+    populate_covid_data(dataset5)
 
 
-def populate_consumption_data():
+def populate_consumption_data(dataset1):
     ''' Method to populate the first table about consumption data '''
 
     with open('/home/app/src/credentials.json', 'r', encoding = "utf8") as file:
@@ -207,58 +206,52 @@ def populate_consumption_data():
     db_cursor = db_conn.cursor()
     logging.debug('Adding first dataset to the database...')
 
-    with open(DATASET1_PATH, "r", encoding = "utf8") as file:
-        lines = file.read().split("\n")
+    for row in tqdm(dataset1.iterrows(), "Adding consumption dataset", total=len(dataset1)):
+        year = int(row[0][0])
+        month = str(row[0][1])
+        region = str(row[0][2])
+        product = str(row[0][3])
 
-        for i, line in tqdm(enumerate(lines), "Adding consumption dataset", total=len(lines)):
-            if i not in (0, len(lines) - 1):
-                values = line.split(',')
+        if str(row[1][0]).lower() != 'nan' and str(row[1][0]).lower() != '':
+            consumption_per_capita = float(row[1][0])
+        else:
+            consumption_per_capita = 'NULL'
 
-                year = int(values[0])
-                month = str(values[1])
-                region = str(values[2])
-                product = str(values[3])
+        if str(row[1][1]).lower() != 'nan' and str(row[1][1]).lower() != '':
+            expenses_per_capita = float(row[1][1])
+        else:
+            expenses_per_capita = 'NULL'
 
-                if values[4] != '':
-                    consumption_per_capita = float(values[4])
-                else:
-                    consumption_per_capita = 'NULL'
+        if str(row[1][2]).lower() != 'nan' and str(row[1][2]).lower() != '':
+            market_penetration = float(row[1][2])
+        else:
+            market_penetration = 'NULL'
 
-                if values[5] != '':
-                    expenses_per_capita = float(values[5])
-                else:
-                    expenses_per_capita = 'NULL'
+        if str(row[1][3]).lower() != 'nan' and str(row[1][3]).lower() != '':
+            average_price_per_kg_or_l = float(row[1][3])
+        else:
+            average_price_per_kg_or_l = 'NULL'
 
-                if values[6] != '':
-                    market_penetration = float(values[6])
-                else:
-                    market_penetration = 'NULL'
+        if str(row[1][4]).lower() != 'nan' and str(row[1][4]).lower() != '':
+            value_in_thousands_of_euros = float(row[1][4])
+        else:
+            value_in_thousands_of_euros = 'NULL'
 
-                if values[7] != '':
-                    average_price_per_kg_or_l = float(values[7])
-                else:
-                    average_price_per_kg_or_l = 'NULL'
+        if str(row[1][5]).lower() != 'nan' and str(row[1][5]).lower() != '':
+            volume_in_thousands_of_kg_or_l = float(row[1][5])
+        else:
+            volume_in_thousands_of_kg_or_l = 'NULL'
 
-                if values[8] != '':
-                    value_in_thousands_of_euros = float(values[8])
-                else:
-                    value_in_thousands_of_euros = 'NULL'
-
-                if values[9] != '':
-                    volume_in_thousands_of_kg_or_l = float(values[9])
-                else:
-                    volume_in_thousands_of_kg_or_l = 'NULL'
-
-                db_cursor.execute(INSERT_CONSUMPTION_SQL.format(year, month, region, product,
-                    consumption_per_capita, expenses_per_capita, market_penetration,
-                    average_price_per_kg_or_l, value_in_thousands_of_euros,
-                    volume_in_thousands_of_kg_or_l))
+        db_cursor.execute(INSERT_CONSUMPTION_SQL.format(year, month, region, product,
+            consumption_per_capita, expenses_per_capita, market_penetration,
+            average_price_per_kg_or_l, value_in_thousands_of_euros,
+            volume_in_thousands_of_kg_or_l))
 
     logging.debug('Data inserted successfully in the consumption database!')
     db_conn.close()
 
 
-def populate_covid_data():
+def populate_covid_data(dataset5):
     ''' Method to populate the second table about covid data '''
 
     with open('/home/app/src/credentials.json', 'r', encoding = "utf8") as file:
@@ -276,57 +269,40 @@ def populate_covid_data():
     db_cursor = db_conn.cursor()
     logging.debug('Adding second dataset to the database...')
 
-    with open(DATASET5_PATH, "r", encoding = "utf8") as file:
-        lines = file.read().split("\n")
+    for row in tqdm(dataset5.iterrows(), "Adding consumption dataset", total=len(dataset5)):
+        date_rep = str(row[1][0])
+        day = int(row[1][1])
+        month = int(row[1][2])
+        year = int(row[1][3])
+        cases = int(row[1][4])
+        deaths = int(row[1][5])
+        countries_and_territories = str(row[1][6])
+        geo_id = str(row[1][7])
 
-        for i, line in tqdm(enumerate(lines), "Adding covid dataset", total=len(lines)):
-            if i not in (0, len(lines) - 1):
-                if "\"" in line:
-                    values = line.split(',')
+        if str(row[1][8]).lower() != 'nan' and str(row[1][8]).lower() != '':
+            country_territory_code = str(row[1][8])
+        else:
+            country_territory_code = 'NULL'
 
-                    if len(values) == 12:
-                        values = [values[0], values[1], values[2], values[3], values[4],
-                                values[5], values[6] + ', ' + values[7], values[8], values[9],
-                                values[10], values[11], 'NULL']
-                    else:
-                        values = [values[0], values[1], values[2], values[3], values[4],
-                            values[5], values[6] + values[7], values[8], values[9],
-                            values[10], values[11], values[12]]
-                else:
-                    values = line.split(',')
+        if str(row[1][9]).lower() != 'nan' and str(row[1][9]).lower() != 'other' \
+            and str(row[1][9]).lower() != '':
+            pop_data_2019 = float(row[1][9])
+        else:
+            pop_data_2019 = 'NULL'
 
-                date_rep = str(values[0])
-                day = int(values[1])
-                month = int(values[2])
-                year = int(values[3])
-                cases = int(values[4])
-                deaths = int(values[5])
-                countries_and_territories = str(values[6])
-                geo_id = str(values[7])
+        if str(row[1][10]).lower() != 'nan' and str(row[1][10]).lower() != '':
+            continent_exp = str(row[1][10])
+        else:
+            continent_exp = 'NULL'
 
-                if values[8] != '':
-                    country_territory_code = str(values[8])
-                else:
-                    country_territory_code = 'NULL'
+        if str(row[1][11]).lower() != 'nan' and str(row[1][11]).lower() != '':
+            incidence = float(row[1][11])
+        else:
+            incidence = 'NULL'
 
-                if values[9] != 'Other' and values[9] != '':
-                    pop_data_2019 = float(values[9])
-                else:
-                    pop_data_2019 = 'NULL'
-
-                if values[10] != '':
-                    continent_exp = str(values[10])
-                else:
-                    continent_exp = 'NULL'
-
-                if values[11] != '':
-                    incidence = float(values[11])
-                else:
-                    incidence = 'NULL'
-
-                db_cursor.execute(INSERT_COVID_SQL.format(date_rep, day, month, year,
-                    cases, deaths, countries_and_territories, geo_id, country_territory_code,
-                    pop_data_2019, continent_exp, incidence))
+        db_cursor.execute(INSERT_COVID_SQL.format(date_rep, day, month, year,
+            cases, deaths, countries_and_territories, geo_id, country_territory_code,
+            pop_data_2019, continent_exp, incidence))
 
     logging.debug('Data inserted successfully in the covid database!')
     db_conn.close()
@@ -334,11 +310,11 @@ def populate_covid_data():
 
 def main():
     ''' Main method '''
-    download_dataset1()
-    download_dataset5()
+    dataset1 = download_dataset1()
+    dataset5 = download_dataset5()
     create_database()
     create_raw_schema()
-    populate_raw_schema()
+    populate_raw_schema(dataset1, dataset5)
 
 
 if __name__ == '__main__':
