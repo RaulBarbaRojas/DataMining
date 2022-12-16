@@ -1,9 +1,3 @@
-''' DOCKER PATH '''
-
-DATASET1_PATH = '/home/app/data/dataset1.txt'
-DATASET5_PATH = '/home/app/data/dataset5.txt'
-
-
 ''' DATABASE NAMES '''
 
 BASE_DATABASE = 'postgres'
