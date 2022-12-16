@@ -29,46 +29,18 @@
       "meta": {}
     },
     {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "expenses_per_capita",
+        "max_value": 1.0,
+        "min_value": 0.0
+      },
+      "meta": {}
+    },
+    {
       "expectation_type": "expect_column_values_to_not_be_null",
       "kwargs": {
         "column": "average_price_per_kg_or_l"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_between",
-      "kwargs": {
-        "column": "month",
-        "max_value": "12.0",
-        "min_value": "1.0"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_not_be_null",
-      "kwargs": {
-        "column": "month"
-      },
-      "meta": {}
-    },
-    {
-      "expectation_type": "expect_column_values_to_be_in_set",
-      "kwargs": {
-        "column": "month",
-        "value_set": [
-          "1.0",
-          "2.0",
-          "3.0",
-          "4.0",
-          "5.0",
-          "6.0",
-          "7.0",
-          "8.0",
-          "9.0",
-          "10.0",
-          "11.0",
-          "12.0"
-        ]
       },
       "meta": {}
     },
@@ -84,9 +56,37 @@
     {
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
-        "column": "expenses_per_capita",
-        "max_value": 1.0,
-        "min_value": 0.0
+        "column": "month",
+        "max_value": 12,
+        "min_value": 1
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "month"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "month",
+        "value_set": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ]
       },
       "meta": {}
     }
@@ -95,7 +95,7 @@
   "meta": {
     "citations": [
       {
-        "citation_date": "2022-12-10T13:50:57.116087Z",
+        "citation_date": "2022-12-16T15:39:25.243554Z",
         "comment": "Created by effective Rule-Based Profiler of OnboardingDataAssistant with the configuration included.\n"
       },
       {
@@ -105,10 +105,10 @@
           "datasource_name": "datasource_processed",
           "limit": 1000
         },
-        "citation_date": "2022-12-10T13:51:47.091392Z",
+        "citation_date": "2022-12-16T15:39:48.673004Z",
         "comment": "Created suite added via CLI"
       }
     ],
-    "great_expectations_version": "0.15.39"
+    "great_expectations_version": "0.15.34"
   }
 }
