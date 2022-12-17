@@ -9,15 +9,15 @@ from fastapi import FastAPI
 import psycopg2
 import joblib
 
-from app.db_consts import AGRICULTURE_DATABASE
-from app.db_consts import HOST
-from app.db_consts import PORT
-from app.db_consts import SELECT_DATACARD3
-
 from app.api_models import OptimalProduct
 from app.api_models import OptimalProductCCAA
 from app.api_models import SpecificProduct
 from app.api_models import SpecificProductCCAA
+
+from app.db_consts import AGRICULTURE_DATABASE
+from app.db_consts import HOST
+from app.db_consts import PORT
+from app.db_consts import SELECT_DATACARD3
 
 logging.basicConfig(
     format = '%(asctime)s - %(filename)s - %(levelname)s - %(message)s',
