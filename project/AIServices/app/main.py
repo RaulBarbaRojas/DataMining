@@ -5,7 +5,7 @@ import json
 
 import pandas as pd
 
-from fastapi import FastAPI
+from fastapi import FastAPI # pylint: disable=import-error
 import psycopg2
 import joblib
 import numpy as np
