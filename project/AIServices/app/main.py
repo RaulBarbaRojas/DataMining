@@ -1,13 +1,26 @@
 ''' MODULE FOR IMPLEMENTING THE AI API OF THE PROJECT '''
 
 import logging
+import json
+
+import pandas as pd
 
 from fastapi import FastAPI
+import psycopg2
+import joblib
+import numpy as np
 
 from app.api_models import OptimalProduct
 from app.api_models import OptimalProductCCAA
 from app.api_models import SpecificProduct
 from app.api_models import SpecificProductCCAA
+
+
+from app.db_consts import AGRICULTURE_DATABASE
+from app.db_consts import HOST
+from app.db_consts import PORT
+from app.db_consts import SELECT_CCAA
+from app.db_consts import SELECT_NO_CCAA
 
 
 logging.basicConfig(
@@ -53,3 +66,89 @@ def handler_predict_product_ccaa(product : SpecificProductCCAA):
     logging.debug('[SERVER]: Month: %d',  product.month)
     logging.debug('[SERVER]: Product: %s',  product.product)
     logging.debug('[SERVER]: CCAA: %s',  product.ccaa)
+
+
+def get_joblib_models():
+    '''Loading the label encoder for products and regions.
+        Loading the gradient boosting model'''
+    encoder_regions = joblib.load('home/app/data/encoder_regions.joblib')
+    encoder_products = joblib.load('home/app/data/encoder_products.joblib')
+    gb_reg = joblib.load('home/app/data/gradient_boosting_model.joblib')
+
+    return encoder_regions,encoder_products,gb_reg
+
+def establish_db_connection():
+    '''Creating psycopg2 connection'''
+    with open('home/app/credentials.json', 'r', encoding = "utf8") as file:
+        credentials = json.load(file)
+
+    db_conn = psycopg2.connect(
+    database = AGRICULTURE_DATABASE,
+    user = credentials['username'],
+    password = credentials['password'],
+    host = HOST,
+    port = PORT
+    )
+    return db_conn
+
+@app.get('/best-product/')
+def get_best_product(product : OptimalProduct):
+    '''Returning the best product for given month'''
+    db_conn = establish_db_connection()
+    _, product_encoder, model = get_joblib_models()
+    db_conn.autocommit = True
+    condition = f" WHERE month = {product.month} GROUP BY month, product, ccaa"
+    dataframe = pd.read_sql_query(SELECT_NO_CCAA + condition , con = db_conn)
+    db_conn.close()
+
+    dataframe['results'] = model.predict(dataframe)
+    df_pred = dataframe.groupby(['month','product'])[['product','results']].mean()
+    product = df_pred.loc[df_pred['results'].idxmax(), 'product']
+    best = product_encoder.inverse_transform([int(product)])[0]
+    return {'best_product':best}
+
+
+@app.get('/best-product-for-ccaa/')
+def get_best_product_for_ccaa(product : OptimalProductCCAA):
+    '''Returning the best product for given month and region'''
+    db_conn = establish_db_connection()
+    region_enocoder, product_encoder, model = get_joblib_models()
+    db_conn.autocommit = True
+    ccaa = region_enocoder.transform([product.ccaa])[0]
+    condition = f" WHERE month = {product.month} AND ccaa={ccaa} GROUP BY month, product, ccaa"
+    dataframe = pd.read_sql_query(SELECT_CCAA + condition , con = db_conn)
+    db_conn.close()
+    product = dataframe.loc[np.argmax(model.predict(dataframe))]['product']
+    best = product_encoder.inverse_transform([int(product)])[0]
+    return  {'best_product':best}
+   
+
+@app.get('/specific-product-prediction/')
+def get_specific_product_prediction(product : SpecificProduct):
+    '''Returning returning predicted expenses per capita for given product and month'''
+    db_conn = establish_db_connection()
+    _, product_encoder, model = get_joblib_models()
+    db_conn.autocommit = True
+
+    item = product_encoder.transform([product.product])[0]
+    condition = f''' WHERE month = {product.month} AND product = {item}
+                    GROUP BY month, product, ccaa'''
+    dataframe  = pd.read_sql_query(SELECT_CCAA + condition , con = db_conn)
+    db_conn.close()
+    value = np.average(model.predict(dataframe))
+    return {'value':value}
+
+@app.get('/specific-product-prediction-for-ccaa/')
+def get_specific_product_prediction_for_ccaa(product : SpecificProductCCAA):
+    '''Returning returning predicted expenses per capita for given product, month and region'''
+    db_conn = establish_db_connection()
+    region_enocoder, product_encoder, model = get_joblib_models()
+    db_conn.autocommit = True
+    ccaa = region_enocoder.transform([product.ccaa])[0]
+    item = product_encoder.transform([product.product])[0]
+    condition = f''' WHERE month = {product.month} AND ccaa={ccaa} AND product = {item}
+                    GROUP BY month, product, ccaa'''
+    dataframe  = pd.read_sql_query(SELECT_CCAA + condition , con = db_conn)
+    db_conn.close()
+    value = model.predict(dataframe)[0]
+    return {'value':value}
