@@ -1,0 +1,8 @@
+----- DATA QUALITY CHECK SETUP -----
+
+The result of the data extraction will be text files with the extracted data. Steps:
+
+ 1. Create docker image: docker build -t <docker-image-name> .
+ 2. Create docker container: docker run --name <container-name>  -d <docker-image-name> 
+    In both commands : <docker-image-name> must be the same
+
