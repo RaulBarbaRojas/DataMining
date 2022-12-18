@@ -1,6 +1,6 @@
 ''' MODULE FOR IMPLEMENTING THE API MODELS '''
 
-from pydantic import BaseModel
+from pydantic import BaseModel  # pylint: disable=import-error
 
 
 

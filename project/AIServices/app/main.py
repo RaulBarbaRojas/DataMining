@@ -3,12 +3,12 @@
 import logging
 import json
 
-import pandas as pd
+import pandas as pd  # pylint: disable=import-error
 
 from fastapi import FastAPI # pylint: disable=import-error
-import psycopg2
-import joblib
-import numpy as np
+import psycopg2  # pylint: disable=import-error
+import joblib  # pylint: disable=import-error
+import numpy as np  # pylint: disable=import-error
 
 from app.api_models import OptimalProduct
 from app.api_models import OptimalProductCCAA

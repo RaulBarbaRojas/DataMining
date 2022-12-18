@@ -110,7 +110,7 @@ Step 2. Copy the files of the folder "models" (in the root directory of the zip)
   
 Step 3. docker build -t apiimage .
   
-Step 4. docker run --name apicontainer -d -v <directory of the project code>/project/AIServices/app/data/:/home/app/data apiimage
+Step 4. docker run --name apicontainer -p 80:80 -v <directory of the project code>/project/AIServices/app/data/:/home/app/data -d apiimage
   
 
 # Files description
