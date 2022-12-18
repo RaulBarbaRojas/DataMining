@@ -2,11 +2,11 @@
 
 import json
 
-import pandas as pd
-from pydantic import BaseModel
-import psycopg2
-import joblib
-import numpy as np
+import pandas as pd # pylint: disable=import-error
+from pydantic import BaseModel # pylint: disable=import-error
+import psycopg2 # pylint: disable=import-error
+import joblib # pylint: disable=import-error
+import numpy as np # pylint: disable=import-error
 
 from app.db_consts import AGRICULTURE_DATABASE
 from app.db_consts import HOST

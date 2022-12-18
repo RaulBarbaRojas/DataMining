@@ -2,7 +2,7 @@
 
 import logging
 
-from fastapi import FastAPI
+from fastapi import FastAPI # pylint: disable=import-error
 
 from app.api_models import OptimalProduct
 from app.api_models import OptimalProductCCAA
