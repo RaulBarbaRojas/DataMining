@@ -5,8 +5,8 @@
     {
       "expectation_type": "expect_table_row_count_to_be_between",
       "kwargs": {
-        "max_value": 17204,
-        "min_value": 17204
+        "max_value": 17203,
+        "min_value": 17203
       },
       "meta": {}
     },

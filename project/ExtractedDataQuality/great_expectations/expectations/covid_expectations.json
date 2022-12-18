@@ -49,7 +49,36 @@
       "expectation_type": "expect_column_values_to_be_between",
       "kwargs": {
         "column": "cases",
-        "min_value": 0
+        "min_value": 0,
+        "mostly": 0.99
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "countryterritorycode"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "popdata2019"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "deaths"
+      },
+      "meta": {}
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "cases"
       },
       "meta": {}
     }
