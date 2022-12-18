@@ -4,8 +4,6 @@ from pydantic import BaseModel
 
 
 
-
-
 class OptimalProduct(BaseModel):
     ''' Class that represents the base model for the optimal product post request '''
 
