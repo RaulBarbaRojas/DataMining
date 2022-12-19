@@ -38,7 +38,7 @@ def handler_predict_optimal_product(product : OptimalProduct):
     logging.debug('[SERVER]: Year: %d',  product.year)
     logging.debug('[SERVER]: Month: %d',  product.month)
     db_conn = establish_db_connection()
-    _, product_encoder, model = get_joblib_models()
+    _, product_encoder, model, _ = get_joblib_models()
     db_conn.autocommit = True
     condition = f" WHERE month = {product.month} GROUP BY month, product, ccaa"
     dataframe = pd.read_sql_query(SELECT_NO_CCAA + condition , con = db_conn)
@@ -59,7 +59,7 @@ def handler_predict_optimal_product_ccaa(product : OptimalProductCCAA):
     logging.debug('[SERVER]: Month: %d',  product.month)
     logging.debug('[SERVER]: CCAA: %s',  product.ccaa)
     db_conn = establish_db_connection()
-    region_enocoder, product_encoder, model = get_joblib_models()
+    region_enocoder, product_encoder, model,_ = get_joblib_models()
     db_conn.autocommit = True
     ccaa = region_enocoder.transform([product.ccaa])[0]
     condition = f" WHERE month = {product.month} AND ccaa={ccaa} GROUP BY month, product, ccaa"
@@ -78,7 +78,7 @@ def handler_predict_product(product : SpecificProduct):
     logging.debug('[SERVER]: Month: %d',  product.month)
     logging.debug('[SERVER]: Product: %s',  product.product)
     db_conn = establish_db_connection()
-    _, product_encoder, model = get_joblib_models()
+    _, product_encoder, model,scaler = get_joblib_models()
     db_conn.autocommit = True
 
     item = product_encoder.transform([product.product])[0]
@@ -87,6 +87,7 @@ def handler_predict_product(product : SpecificProduct):
     dataframe  = pd.read_sql_query(SELECT_CCAA + condition , con = db_conn)
     db_conn.close()
     value = np.average(model.predict(dataframe))
+    value = scaler.inverse_transform(pd.DataFrame([value], columns = ['GASTO X CAPITA']))[0][0]
     return {'value':value}
 
 
@@ -99,7 +100,7 @@ def handler_predict_product_ccaa(product : SpecificProductCCAA):
     logging.debug('[SERVER]: Product: %s',  product.product)
     logging.debug('[SERVER]: CCAA: %s',  product.ccaa)
     db_conn = establish_db_connection()
-    region_enocoder, product_encoder, model = get_joblib_models()
+    region_enocoder, product_encoder, model,scaler = get_joblib_models()
     db_conn.autocommit = True
     ccaa = region_enocoder.transform([product.ccaa])[0]
     item = product_encoder.transform([product.product])[0]
@@ -108,6 +109,7 @@ def handler_predict_product_ccaa(product : SpecificProductCCAA):
     dataframe  = pd.read_sql_query(SELECT_CCAA + condition , con = db_conn)
     db_conn.close()
     value = model.predict(dataframe)[0]
+    value = scaler.inverse_transform(pd.DataFrame([value], columns = ['GASTO X CAPITA']))[0][0]
     return {'value':value}
 
 
@@ -117,8 +119,9 @@ def get_joblib_models():
     encoder_regions = joblib.load('/home/app/data/encoder_regions.joblib')
     encoder_products = joblib.load('/home/app/data/encoder_products.joblib')
     gb_reg = joblib.load('/home/app/data/gradient_boosting_model.joblib')
+    gastoxcapita_scaler = joblib.load('/home/app/data/gastoxcapita_scaler.joblib')
 
-    return encoder_regions,encoder_products,gb_reg
+    return encoder_regions,encoder_products,gb_reg, gastoxcapita_scaler
 
 def establish_db_connection():
     '''Creating psycopg2 connection'''
