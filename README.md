@@ -59,7 +59,7 @@ Step 7. Perform the steps of the setup for the API container.
   
 ### Database setup guide
 
-Step 1. docker run --name <name-of-db-container> -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+Step 1. docker run --name postgrescontainer -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
 
   
 ### Extract container setup guide
