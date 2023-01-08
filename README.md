@@ -37,6 +37,13 @@ The authors of this project are:
   </tbody>
 </table>
 
+# Data mining course
+
+All the data mining course notebooks can be found in the 'notebooks' folder.
+
+# MultiAgent Systems course
+
+All the multiagent systems course tasks can be found in the python source code of the github repository.
 
 # Setup
 
